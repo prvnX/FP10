@@ -25,6 +25,6 @@ object Sub {
     val z = new Rational(2, 7)  // 2/7
     val yMinusZ = y.sub(z)
     val result = x.sub(yMinusZ)
-    println(result)
+    println(s"x=3/4,y=5/8,z=2/7 Answer of x-(y-z) = $result")
   }
 }

@@ -1,42 +1,51 @@
-object bank{
-    class Account(val accno: Int,var balance: Double){
-        def deposit(amount: Double): Unit = {
-            if(amount>0){
-                balance += amount
-                println(s"Deposited $amount to account $accno, new balance: $balance")
-            }
-            else{
-                throw new Error("Amount must be greater than zero")
-            }
-        }
+object bank {
 
-        def transfer(amount: Int, that: Account): Unit = {
-            require(amount > 0, "Amount must be greater than zero")
-            this.balance -= amount
-            that.balance += amount
-        }
+  case class Account(accountNumber: String, balance: Double)
 
-        def withdraw(amount: Double): Unit = {
-            if (amount > 0 && amount <= balance) {
-                balance -= amount
-                println(s"Withdrew $$amount from account $accno, new balance: $$balance")
-            } else if (amount > balance) {
-                println("Insufficient balance.")
-            } else {
-                println("Withdraw amount must be positive.")
-            }
-        }
-        def getBalance: Double = balance;
+  class Bank(accounts: List[Account]) {
+
+    // Accounts with negative balances
+    def negativeBalanceAccounts(): List[Account] = {
+      accounts.filter(_.balance < 0)
     }
+
+    // Sum of all account balances
+    def totalBalance(): Double = {
+      accounts.map(_.balance).sum
+    }
+    // Final balances of all accounts after applying interest
+    def applyInterest(): List[Account] = {
+      accounts.map { account =>
+        val interestRate = if (account.balance >= 0) 0.05 else 0.1
+        val newBalance = account.balance + (account.balance * interestRate)
+        account.copy(balance = newBalance)
+      }
+    }
+  }
+
     def main(args: Array[String]): Unit = {
-        val a1 = new Account(10574242, 10000.00)
-        val a2 = new Account(50056421, 25000.00)
-        a1.deposit(1000.00)
-        println(s"Account 1  balance(after deposit): ${a1.getBalance}")
-        a1.withdraw(2000.00)
-        println(s"Account 1 balance(after withdrawal): ${a1.getBalance}")
-        a1.transfer(10050, a2)
-        println(s"Account 1 balance(after transfer to account 2): ${a1.getBalance}")
-        println(s"Account 2 balance(after transfer ): ${a2.getBalance}")  
-    }
+    // list of accounts
+    val accounts = List(
+      Account("A001", 500.0),
+      Account("A002", -200.0),
+      Account("A003", 1000.0),
+      Account("A004", -50.0)
+    )
+
+    // Create a Bank object
+    val bank = new Bank(accounts)
+
+    // List of Accounts with negative balances
+    val negativeAccounts = bank.negativeBalanceAccounts()
+    println(s"Accounts with negative balances: $negativeAccounts")
+
+    // Calculate the sum of all account balances
+    val totalBalance = bank.totalBalance()
+    println(s"Total balance of all accounts: $totalBalance")
+
+    // Calculate the final balances of all accounts after applying interest
+    val accountsWithInterest = bank.applyInterest()
+    println(s"Accounts after applying interest: $accountsWithInterest")
+  }
 }
+
